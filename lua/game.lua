@@ -40,6 +40,24 @@ function levelReset()
     end
 end
 
+function screenShake(dt)
+    if isShake then
+        shakeT = shakeT + dt
+    end
+
+    if shakeT > 0 then
+        tX, tY = (wWidth - gWidth) / 2 + love.math.random(-0.25, 0.25), (wHeight - gHeight) / 2 + love.math.random(-0.25, 0.25)
+    else
+        tX, tY = (wWidth - gWidth) / 2, (wHeight - gHeight) / 2
+    end
+
+    -- stop screen shake effect
+    if shakeT > 0.1 then
+        isShake = false
+        shakeT = 0
+    end
+end
+
 function playerFunc(dt)
     if isLaunchedBall then
         ball.x, ball.y = ball.x + dt * ball.vx, ball.y - dt * ball.vy
@@ -109,6 +127,7 @@ function playerCol()
             ball.vx = math.abs(350)
             ball.vy = math.abs(350)
             ball.y = player.y - 8
+            isShake = true
         elseif bT < board.y then
             ball.y = board.y
             ball.vy = -ball.vy

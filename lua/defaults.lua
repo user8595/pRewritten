@@ -1,5 +1,6 @@
 wWidth, wHeight = love.graphics.getWidth(), love.graphics.getHeight()
 gWidth, gHeight = 640, 480
+tX, tY = (wWidth - gWidth) / 2, (wHeight - gHeight) / 2
 
 -- fonts
 pSans, picopixel = love.graphics.newFont("/assets/PixeloidSans.ttf", 16), love.graphics.newFont("/assets/Picopixel.ttf", 14)
@@ -13,6 +14,9 @@ isLaunchedBall = false
 
 isFail = false
 isLoseLife = false
+
+isShake = false
+shakeT = 0
 
 -- game board
 board = {
