@@ -1,6 +1,7 @@
 function gameScreen()
     if state == "game" then
-        board()
+        gameBoard()
+        gameDisplay()
         hud()
     end
 end
@@ -13,6 +14,11 @@ function states()
 
     if isPaused then
         pauseScreen()
+    else
+    end
+
+    if isDebug then
+        debugMenu()
     else
     end
 end

@@ -1,10 +1,10 @@
 require("lua.defaults")
-require("lua.ui")
 require("lua.textures")
 require("lua.content")
 require("lua.levels")
 require("lua.states")
 require("lua.game")
+require("lua.ui")
 
 function love.load()
     love.graphics.setBackgroundColor(bgCol)

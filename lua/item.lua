@@ -8,6 +8,7 @@ local pitem = {
     score = 100,
     itype = itype,
     get = false,
+    despawn = false
 }
 
 function pitem:new(x, y, itype)
@@ -23,6 +24,12 @@ end
 
 function pitem:update(dt)
     self.y = self.y + dt * self.vy
+end
+
+function pitem:despawn()
+    if self.y > gWidth + 50 then
+        self.despawn = true
+    end
 end
 
 function pitem:draw()
