@@ -1,14 +1,27 @@
 -- objects
-require("lua.brick")
-require("lua.item")
+local br = require("lua.obj.brick")
+local it = require("lua.obj.item")
+local table_clear = require("table.clear")
+
+-- level table
+lvTable = lv1
+
+for y, r in ipairs(lvTable) do
+    for x, t in ipairs(r) do
+        if t ~= 0 then
+            table.insert(blocks, br:new(board.x + 36 * (x - 1), board.y + 64 + 32 * (y - 1), t, 1))
+        end 
+    end
+end
 
 function gameDisplay()
     love.graphics.setColor(white)
     love.graphics.draw(playerTex[1], player.x, player.y)
     love.graphics.draw(ballTex, ball.x, ball.y)
 
-    if love.keyboard.isDown(keys.launch) and isPause == false and isFail == false then
+    if love.keyboard.isDown(keys.launch) and isPaused == false and isFail == false then
         love.graphics.draw(playerTex[2], player.x - 2, player.y - 2)
+    else
     end
 
     for i, v in ipairs(blocks) do
@@ -16,11 +29,13 @@ function gameDisplay()
     end
 end
 
-function levelUpdate()
-    for i, v in ipairs(blocks) do
-        if v.hit then
-            table.remove(blocks, i)
-            stats.score = stats.score + v.score
+function levelReset()
+    table_clear(blocks)
+    for y, r in ipairs(lvTable) do
+        for x, t in ipairs(r) do
+            if t ~= 0 then
+                table.insert(blocks, br:new(board.x + 36 * (x - 1), board.y + 64 + 32 * (y - 1), t, 1))
+            end 
         end
     end
 end
@@ -101,7 +116,7 @@ function playerCol()
     end
 end
 
-function statsFunc()
+function statsFunc(dt)
     if stats.score > stats.hScore then
         stats.hScore = stats.score
     end
@@ -109,6 +124,11 @@ function statsFunc()
     if stats.lifes < 0 then
         stats.lifes = 0
         isFail = true
+    end
+
+    if stats.score >= stats.exLife then
+        stats.lifes = stats.lifes + 1
+        stats.exLife = stats.exLife + 25000
     end
 end
 
@@ -125,19 +145,40 @@ function ballColP()
     if bB > player.y and bR > player.x and bL < player.x + player.w and ball.x > player.x and ball.x < player.x + player.w - ball.w and ball.y < player.y + player.h then
         ball.y = player.y - ball.h
         if ball.vx < 550 and ball.vy < 550 and ball.vx > -550 and ball.vy > -550 then
-            ball.vy = math.abs(ball.vy - 1)
             if ball.vx > 0 then
-                ball.vx = ball.vx + 0.5
+                ball.vx = ball.vx + 1
             else
-                ball.vx = ball.vx - 0.5
+                ball.vx = ball.vx - 1
             end
-            if ball.vy > ball.vx and ball.vy > 350 and ball.vy < 550 then
-                ball.vy = ball.vy - 0.5
+            if ball.vy > 0 then
+                ball.vy = ball.vy + 1
             else
-                ball.vy = ball.vy + 0.5
+                ball.vy = math.abs(ball.vy - 1)
             end
         else
             ball.vy = math.abs(ball.vy)
+        end
+    end
+end
+
+--TODO: Add ball rebound in block hit
+function ballCol(obj)
+    local bL, bR, bT, bB = ball.x, ball.x + ball.w, ball.y, ball.y + ball.h
+    local objL, objR, objT, objB = obj.x, obj.x + obj.w, obj.y, obj.y + obj.h
+
+    if bB > objT and bT < objB and bR > objL and bL < objR then
+        -- true..
+        print("true..")
+        obj.hit = true
+    end
+end
+
+function levelUpdate()
+    for i, v in ipairs(blocks) do
+        ballCol(v)
+        if v.hit then
+            table.remove(blocks, i)
+            stats.score = stats.score + v.score
         end
     end
 end

@@ -1,9 +1,13 @@
 function gameContent()
     love.graphics.push()
     love.graphics.translate((wWidth - gWidth) / 2, (wHeight - gHeight) / 2)
-    gameScreen()
     states()
+    gameScreen()
     love.graphics.pop()
+    if isDebug then
+        debugMenu()
+    else
+    end
 end
 
 function gameKey(key)
@@ -11,7 +15,11 @@ function gameKey(key)
         love.event.quit(0)
     end
 
-    if key == "p" then
+    if key == "r" then
+        levelReset()
+    end
+
+    if key == "p" and isFail == false then
         if isPaused == false then
             isPaused = true
         else
@@ -40,10 +48,10 @@ function gameLoop(dt)
     if state == "game" and isPaused == false and isFail == false then
         playerFunc(dt)
         playerMove(dt)
+        levelUpdate()
         playerCol()
         ballColP()
-        levelUpdate()
-        statsFunc()
+        statsFunc(dt)
     else
     end
 end

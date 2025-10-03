@@ -16,9 +16,4 @@ function states()
         pauseScreen()
     else
     end
-
-    if isDebug then
-        debugMenu()
-    else
-    end
 end
