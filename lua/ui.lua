@@ -40,4 +40,5 @@ function debugMenu()
     love.graphics.print(wWidth .. "x" .. wHeight, picopixel, 10, 25)
     love.graphics.print(ball.vx .. ", ".. ball.vy, picopixel, 10, 40)
     love.graphics.print(stats.exLife, picopixel, 10, 55)
+    love.graphics.print(player.d, picopixel, 10, 70)
 end

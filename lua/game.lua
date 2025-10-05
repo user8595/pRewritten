@@ -76,14 +76,18 @@ function playerMove(dt)
         if love.keyboard.isDown(keys.left) then
             if love.keyboard.isDown(keys.launch) then
                 player.x = math.floor(player.x - dt * 700)
+                player.d = -1
             else
                 player.x = math.floor(player.x - dt * player.vx)
+                player.d = -1
             end
         elseif love.keyboard.isDown(keys.right) then
             if love.keyboard.isDown(keys.launch) then
                 player.x = math.floor(player.x + dt * 700)
+                player.d = 1
             else
                 player.x = math.floor(player.x + dt * player.vx)
+                player.d = 1
             end
         end
     end
@@ -151,44 +155,51 @@ function statsFunc(dt)
     end
 end
 
-function ballCol(obj)
-    local bL, bR, bT, bB = ball.x, ball.x + ball.w, ball.y, ball.y + ball.h
-    local oL, oR, oT, oB = obj.x, obj.x + obj.w, obj.y, obj.y + obj.h
-
-    --TODO: Finish object hitboxes
-end
-
+--TODO: Improve ball angle handling?
 function ballColP()
     local bL, bR, bT, bB = ball.x, ball.x + ball.w, ball.y, ball.y + ball.h
-
-    if bB > player.y and bR > player.x and bL < player.x + player.w and ball.x > player.x and ball.x < player.x + player.w - ball.w and ball.y < player.y + player.h then
+    
+    if bB > player.y and bR > player.x and bL < player.x + player.w and
+    ball.x > player.x and ball.x < player.x + player.w and ball.y < player.y + player.h then
         ball.y = player.y - ball.h
         if ball.vx < 550 and ball.vy < 550 and ball.vx > -550 and ball.vy > -550 then
-            if ball.vx > 0 then
-                ball.vx = ball.vx + 1
-            else
-                ball.vx = ball.vx - 1
+            -- x speed
+            if player.d == -1 then
+                if ball.vx > 0 then
+                    ball.vx = math.abs(ball.vx + 1)
+                else
+                    ball.vx = -math.abs(ball.vx - 1)
+                end
+            elseif player.d == 1 then
+                if ball.vx > 0 then
+                    ball.vx = -math.abs(ball.vx - 1)
+                else
+                    ball.vx = math.abs(ball.vx + 1)
+                end
             end
+            
+            -- y speed
             if ball.vy > 0 then
-                ball.vy = ball.vy + 1
+                ball.vy = -math.abs(ball.vy + 1)
             else
                 ball.vy = math.abs(ball.vy - 1)
             end
-        else
-            ball.vy = math.abs(ball.vy)
         end
     end
 end
 
---TODO: Add ball rebound in block hit
+--TODO: Improve ball collision with bricks
 function ballCol(obj)
     local bL, bR, bT, bB = ball.x, ball.x + ball.w, ball.y, ball.y + ball.h
     local objL, objR, objT, objB = obj.x, obj.x + obj.w, obj.y, obj.y + obj.h
-
-    if bB > objT and bT < objB and bR > objL and bL < objR then
-        -- true..
-        print("true..")
-        obj.hit = true
+    
+    if bL > objL and bL < objR and bT > objT and bT < objB then
+        if bT < objB or bB > objT then
+            -- wait what
+            print("true..")
+            obj.hit = true
+            ball.vy = -ball.vy
+        end
     end
 end
 
